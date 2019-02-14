@@ -28,9 +28,16 @@ class GameScene: SKScene {
     
     //Game time left properties
     var timeRemainingLabel: SKLabelNode!
+    
     var timeRemaining = 60 {
+        
         didSet {
             timeRemainingLabel.text = "Seconds left: \(timeRemaining)"
+            
+            if timeRemaining <= 10 {
+                timeRemainingLabel.fontColor = UIColor.red
+                
+            }
         }
     }
     
@@ -82,6 +89,11 @@ class GameScene: SKScene {
         //Track game time remaining
         gameTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(setGameTimer), userInfo: nil, repeats: true)
         
+        //Initiate game background music and volume setting
+        let backgroundMusic = SKAction.playSoundFileNamed("backgroundMusic.mp3", waitForCompletion: false)
+        let backgroundMusicVolume = SKAction.changeVolume(to: 0.15, duration: 0.15)
+        let backgroundMusicGroup = SKAction.group([backgroundMusic, backgroundMusicVolume])
+        
         //Add background image node to scene
         let background = SKSpriteNode(imageNamed: "background")
         background.position = CGPoint(x: 512, y: 384)
@@ -89,6 +101,9 @@ class GameScene: SKScene {
         background.zPosition = -1
         background.name = "background"
         addChild(background)
+        
+        //Run background with background music
+        background.run(backgroundMusicGroup)
         
         //Create score label node and add to scene
         playerScoreLabel = SKLabelNode(fontNamed: "Chalkduster")
@@ -132,12 +147,13 @@ class GameScene: SKScene {
         
         //Display bullets
         showBullets()
+        
     }
     
-    //Update frame
+    //Update each frame
     override func update(_ currentTime: TimeInterval) {
         
-        //Handle new game
+        //Game over alert and new game alert action
         if gameEnded {
             
             //Display alert with score
@@ -214,6 +230,10 @@ class GameScene: SKScene {
                         
                         //Clear node name so it can't be touched again
                         touchedNode.name = ""
+                        
+                        //Remove node from activeTargets array
+                        let index = activeTargets.index(of: touchedNode as! SKSpriteNode)!
+                        activeTargets.remove(at: index)
                      
                     //badTarget node tapped actions
                     case "badTarget":
@@ -221,33 +241,10 @@ class GameScene: SKScene {
                         //Add points
                         playerScore += 5
                         
-                        //Deduct bullets left
+                        //Update bullets left
                         bulletUsed()
                         
-                        //Set particle emitter for when node is touched
-                        let emitter = SKEmitterNode(fileNamed: "smoke")!
-                        emitter.position = touchedNode.position
-                        emitter.name = "smoke"
-                        addChild(emitter)
-                        
-                        //Clear node name so it can't be touched again
-                        touchedNode.name = ""
-                        
-                        //Stop node from moving
-                        touchedNode.physicsBody?.isDynamic = false
-                        
-                        //Scale and fade node out simultaneously
-                        let scaleOut = SKAction.scale(to: 0.001, duration: 0.2)
-                        let fadeOut = SKAction.fadeOut(withDuration: 0.2)
-                        let group = SKAction.group([scaleOut, fadeOut])
-                        
-                        //Remove node from scene, using group object above
-                        let actionSequence = SKAction.sequence([group, SKAction.removeFromParent()])
-                        touchedNode.run(actionSequence)
-                        
-                        //Remove node from activeTargets array
-                        let index = activeTargets.index(of: touchedNode as! SKSpriteNode)!
-                        activeTargets.remove(at: index)
+                        targetHit(node: touchedNode)
                     
                     //bonusTarget node tapped actions
                     case "bonusTarget":
@@ -255,33 +252,10 @@ class GameScene: SKScene {
                         //Add bonus points
                         playerScore += 10
                         
-                        //Deduct bullets left
+                        //Update bullets left
                         bulletUsed()
                         
-                        //Set particle emitter for when node is touched
-                        let emitter = SKEmitterNode(fileNamed: "smoke")!
-                        emitter.position = touchedNode.position
-                        emitter.name = "smoke"
-                        addChild(emitter)
-                        
-                        //Clear node name so it can't be touched again
-                        touchedNode.name = ""
-                        
-                        //Stop node from moving
-                        touchedNode.physicsBody?.isDynamic = false
-                        
-                        //Scale and fade node out simultaneously
-                        let scaleOut = SKAction.scale(to: 0.001, duration: 0.2)
-                        let fadeOut = SKAction.fadeOut(withDuration: 0.2)
-                        let group = SKAction.group([scaleOut, fadeOut])
-                        
-                        //Remove node from scene, using group object above
-                        let actionSequence = SKAction.sequence([group, SKAction.removeFromParent()])
-                        touchedNode.run(actionSequence)
-                        
-                        //Remove node from activeTargets array
-                        let index = activeTargets.index(of: touchedNode as! SKSpriteNode)!
-                        activeTargets.remove(at: index)
+                        targetHit(node: touchedNode)
                         
                     //reload node tapped actions
                     case "reload":
@@ -293,15 +267,15 @@ class GameScene: SKScene {
                         
                     } //End switch touchedNode.name
                 
-                } // End If, Else
+                } // End inner if, else block
                 
             } //End forLoop
 
-        }
+        }//End outer if, else block
  
     } //End of touchesBegan() method
     
-    //1. Create target and add to Scene
+    //Create target and add to Scene
     func createTarget(x: Int, xMovement: CGFloat, y: Int, yMovement: CGFloat) {
         
         //Determine good or bad target
@@ -350,14 +324,6 @@ class GameScene: SKScene {
         } else {
             targetMove = SKAction.follow(bezierPath.cgPath, asOffset: true, orientToPath: false, speed: 400)
         }
-        
-//        //Rotate targets
-//        //Create random angular velocity (spinning speed)
-//        target.physicsBody = SKPhysicsBody(circleOfRadius: 10)
-//
-//        let randomAngularVelocity = CGFloat.random(in: -6...6) / 2.0
-//        target.physicsBody?.angularVelocity = randomAngularVelocity
-//        target.physicsBody = SKPhysicsBody(circleOfRadius: 64)
         
         //Set movement type
         targetMove.timingMode = .linear
@@ -482,6 +448,36 @@ class GameScene: SKScene {
         
     }//End bulletUsed()
     
+    //badTarget or bonusTarget hit actions
+    func targetHit(node touchedNode: SKNode) {
+        
+        //Set particle emitter for when node is touched
+        let emitter = SKEmitterNode(fileNamed: "smoke")!
+        emitter.position = touchedNode.position
+        emitter.name = "smoke"
+        addChild(emitter)
+        
+        //Clear node name so it can't be touched again
+        touchedNode.name = ""
+        
+        //Stop node from moving
+        touchedNode.physicsBody?.isDynamic = false
+        
+        //Scale and fade node out simultaneously
+        let scaleOut = SKAction.scale(to: 0.001, duration: 0.2)
+        let fadeOut = SKAction.fadeOut(withDuration: 0.2)
+        let group = SKAction.group([scaleOut, fadeOut])
+        
+        //Remove node from scene, using group object above
+        let actionSequence = SKAction.sequence([group, SKAction.removeFromParent()])
+        touchedNode.run(actionSequence)
+        
+        //Remove node from activeTargets array
+        let index = activeTargets.index(of: touchedNode as! SKSpriteNode)!
+        activeTargets.remove(at: index)
+    }
+    
+    //Reload bullets actions
     func reload() {
         
         //Check gun isn't already full
@@ -512,7 +508,7 @@ class GameScene: SKScene {
     
     }//Reload()
     
-    //Game Over
+    //Run Game Over
     func gameOver() {
     
         //Ensure game has ended
@@ -521,7 +517,7 @@ class GameScene: SKScene {
         
         }
         
-        //Set gameEnded falg to true
+        //Set gameEnded flag to true
         gameEnded = true
         
         //Stop screen animations and disable user interaction
