@@ -37,28 +37,30 @@ Self challenge
 
 # Project goals / instructions
 
-• Make your own app, starting from a blank canvas. 
-• You challenge is to make a shooting gallery game using SpriteKit: create three rows on the screen, then have targets slide across from one side to the other. 
+• Make your own app, starting from a blank canvas.</br>
+• Your challenge is to make a shooting gallery game using SpriteKit: create three rows on the screen, then have targets slide across from one side to the other. </br>
 • If the user taps a target, make it fade out and award them points.
 
-How you implement this game really depends on what kind of shooting gallery games you’ve played in the past, but here are some suggestions to get you started:
 
-• Make some targets big and slow, and others small and fast. The small targets should be worth more points.
-• Add “bad” targets – things that cost the user points if they get shot accidentally.
-Make the top and bottom rows move left to right, but the middle row move right to left. • Add a timer that ticks down from 60 seconds. When it hits zero, show a Game Over
-message.
-• Try going to https://openclipart.org/ to see what free artwork you can find.
-• Give the user six bullets per clip. Make them tap a different part of the screen to reload.
+How you implement this game really depends on what kind of shooting gallery games you’ve played in the past, but here are some suggestions to get you started:</br>
+• Make some targets big and slow, and others small and fast. The small targets should be worth more points. </br>
+• Add “bad” targets – things that cost the user points if they get shot accidentally. </br>
 
-<strong> Additional hints: </strong>
 
-• Moving the targets in your shooting gallery is a perfect job for the follow() action. 
-• Use a sequence so that targets move across the screen smoothly, then remove themselves when they are off screen.
-• You can create a timer using an SKLabelNode, a secondsRemaining integer, and a Timer that takes 1 away from secondsRemaining every 1 second.
-• Make sure you call invalidate() when the time runs out.
+Make the top and bottom rows move left to right, but the middle row move right to left. </br>
+• Add a timer that ticks down from 60 seconds. When it hits zero, show a Game Over
+message. </br>
+• Try going to https://openclipart.org/ to see what free artwork you can find.</br>
+• Give the user six bullets per clip. Make them tap a different part of the screen to reload.</br>
+
+</br><strong> Additional hints: </strong>
+• Moving the targets in your shooting gallery is a perfect job for the follow() action. </br>
+• Use a sequence so that targets move across the screen smoothly, then remove themselves when they are off screen.</br>
+• You can create a timer using an SKLabelNode, a secondsRemaining integer, and a Timer that takes 1 away from secondsRemaining every 1 second.</br>
+• Make sure you call invalidate() when the time runs out.</br>
 • Use nodes(at:) to see what was tapped. If you don’t find a node named “Target” in the
-returned array, you could subtract points for the player missing a shot.
-• You should be able to use a property observer for both player score and number of bullets
+returned array, you could subtract points for the player missing a shot.</br>
+• You should be able to use a property observer for both player score and number of bullets 
 remaining in clip. Changing the score or bullets would update the appropriate SKLabelNode on the screen.
 
 # Stretch goals
