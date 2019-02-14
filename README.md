@@ -53,7 +53,7 @@ message. </br>
 • Try going to https://openclipart.org/ to see what free artwork you can find.</br>
 • Give the user six bullets per clip. Make them tap a different part of the screen to reload.</br>
 
-</br><strong> Additional hints: </strong>
+</br> <strong> Additional hints: </strong> </br>
 • Moving the targets in your shooting gallery is a perfect job for the follow() action. </br>
 • Use a sequence so that targets move across the screen smoothly, then remove themselves when they are off screen.</br>
 • You can create a timer using an SKLabelNode, a secondsRemaining integer, and a Timer that takes 1 away from secondsRemaining every 1 second.</br>
