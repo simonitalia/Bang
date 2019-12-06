@@ -1,5 +1,8 @@
 # Application Name
-Shoot 'em up!
+Bang
+
+# Objective
+The aim of this game is to score as many points as possible before the timer reaches 0. To score points shoot the bad character (Yosemite Sam). Score bonus points by shooting the Money bag/s when they appear. Lose points by shooting the good character (Donald Duck). Be sure to reload gun before it is emptied. The gun holds a maximum of 6 shots. Reload at any time.
 
 # Course
 Hacking with Swift
