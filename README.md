@@ -16,7 +16,7 @@ This iOS app is developed as a "self challenge" project in the iBook tutorial "H
 # Project Type
 Self challenge
 
-# Topics / milestones
+# Technologies
 - GamePlayKit
 
 - SceneKit
